@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hunter System</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f8f7f4;
+    --bg2: #ffffff;
+    --bg3: #f1efe8;
+    --text: #1a1a1a;
+    --text2: #5f5e5a;
+    --text3: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .container { max-width: 620px; margin: 0 auto; }
+
+  /* Hunter card */
+  .hunter-card {
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 14px;
+    border: 1.5px solid var(--rank-color, #888);
+    background: var(--bg2);
+    transition: border-color .4s;
+  }
+  .hunter-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .rank-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--rank-color); }
+  .hunter-name { font-size: 22px; font-weight: 600; margin-top: 2px; }
+  .rank-title { font-size: 13px; color: var(--text2); margin-top: 2px; }
+  .xp-block { text-align: right; }
+  .xp-label { font-size: 11px; color: var(--text3); }
+  .xp-value { font-size: 26px; font-weight: 600; color: var(--rank-color); line-height: 1.1; }
+  .streak { font-size: 11px; color: var(--text3); margin-top: 3px; }
+  .rank-progress { margin-top: 14px; }
+  .rank-progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); margin-bottom: 5px; }
+  .progress-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; background: var(--rank-color); transition: width .5s cubic-bezier(.4,0,.2,1); }
+  .max-rank-msg { font-size: 12px; font-weight: 500; color: var(--rank-color); margin-top: 10px; }
+
+  /* Stats */
+  .card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .card-title { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+  .stat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .stat-row:last-child { margin-bottom: 0; }
+  .stat-label { font-size: 12px; color: var(--text2); width: 130px; flex-shrink: 0; }
+  .stat-track { flex: 1; height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .stat-fill { height: 100%; border-radius: 3px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+  .stat-xp { font-size: 11px; color: var(--text3); width: 42px; text-align: right; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 12px; align-items: center; }
+  .tab-btn {
+    font-size: 13px; padding: 6px 16px; border-radius: 8px; cursor: pointer;
+    border: 1px solid transparent; background: transparent; color: var(--text2);
+    font-family: inherit; transition: background .15s, border-color .15s, color .15s;
+  }
+  .tab-btn.active { background: var(--bg2); border-color: var(--border2); color: var(--text); }
+  .tab-btn:hover:not(.active) { background: var(--bg3); }
+  .reset-btn {
+    margin-left: auto; font-size: 11px; padding: 4px 10px; border-radius: 8px;
+    background: transparent; border: 0.5px solid var(--border); color: var(--text3);
+    cursor: pointer; font-family: inherit;
+  }
+  .reset-btn:hover { color: #c0392b; border-color: #c0392b; }
+
+  /* Quests */
+  .quest-item {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; cursor: pointer; margin-bottom: 6px;
+    transition: background .15s, transform .1s, border-color .15s;
+    user-select: none;
+  }
+  .quest-item:hover { background: var(--bg3); border-color: var(--border2); }
+  .quest-item:active { transform: scale(0.985); }
+  .quest-item.flash { background: #eaf3de; border-color: #97c459; }
+  .quest-icon { font-size: 16px; width: 22px; text-align: center; flex-shrink: 0; }
+  .quest-body { flex: 1; }
+  .quest-name { font-size: 13px; font-weight: 500; }
+  .quest-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .xp-badge {
+    font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+    flex-shrink: 0;
+  }
+  .today-count { font-size: 12px; color: var(--text3); text-align: center; margin-top: 4px; padding: 8px 0; }
+
+  /* Log */
+  .log-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 8px; padding: 8px 12px; margin-bottom: 4px;
+  }
+  .log-name { flex: 1; font-size: 13px; font-weight: 500; }
+  .log-skill { font-size: 11px; color: var(--text3); margin-left: 6px; font-weight: 400; }
+  .log-xp { font-size: 11px; font-weight: 600; }
+  .log-time { font-size: 11px; color: var(--text3); }
+  .empty-state { text-align: center; padding: 40px 0; font-size: 13px; color: var(--text3); }
+
+  /* Rank-up toast */
+  .toast {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    border-radius: 12px; padding: 12px 24px; text-align: center;
+    border: 1.5px solid; min-width: 220px; z-index: 1000;
+    animation: toastIn .3s ease, toastOut .3s ease 2.7s forwards;
+    pointer-events: none;
+  }
+  .toast-up { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+  .toast-rank { font-size: 20px; font-weight: 600; margin-top: 2px; }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+  @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+
+  /* Rank badge row */
+  .rank-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .rank-pip {
+    flex: 1; min-width: 60px; text-align: center; padding: 6px 4px;
+    border-radius: 8px; border: 1px solid var(--border); font-size: 11px; font-weight: 600;
+    opacity: .35; transition: opacity .4s;
+  }
+  .rank-pip.unlocked { opacity: 1; }
+  .rank-pip-letter { font-size: 16px; display: block; margin-bottom: 1px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="toast-container"></div>
+  <div id="app"></div>
+</div>
+
+<script>
+const SKILLS = [
+  { id: "dsa",    label: "DSA / Leetcode",  color: "#378ADD", max: 500 },
+  { id: "sql",    label: "SQL",             color: "#7F77DD", max: 200 },
+  { id: "ml",     label: "ML / Python",     color: "#639922", max: 300 },
+  { id: "stats",  label: "Statistics",      color: "#BA7517", max: 200 },
+  { id: "system", label: "Systems design",  color: "#D85A30", max: 150 },
+];
+
+const RANKS = [
+  { rank: "E", min: 0,    label: "Unawakened",     color: "#888780", bg: "#F1EFE8" },
+  { rank: "D", min: 80,   label: "Novice Hunter",  color: "#3B6D11", bg: "#EAF3DE" },
+  { rank: "C", min: 200,  label: "Apprentice",     color: "#185FA5", bg: "#E6F1FB" },
+  { rank: "B", min: 400,  label: "Skilled Hunter", color: "#534AB7", bg: "#EEEDFE" },
+  { rank: "A", min: 700,  label: "Elite Hunter",   color: "#993C1D", bg: "#FAECE7" },
+  { rank: "S", min: 1100, label: "Shadow Monarch", color: "#854F0B", bg: "#FAEEDA" },
+];
+
+const QUESTS = [
+  { id: "lc_easy",    label: "Leetcode easy",      skill: "dsa",    xp: 5,  icon: "⚔️" },
+  { id: "lc_med",     label: "Leetcode medium",    skill: "dsa",    xp: 12, icon: "⚔️" },
+  { id: "lc_hard",    label: "Leetcode hard",      skill: "dsa",    xp: 25, icon: "⚔️" },
+  { id: "sql_easy",   label: "SQL easy problem",   skill: "sql",    xp: 5,  icon: "🗄️" },
+  { id: "sql_med",    label: "SQL medium problem", skill: "sql",    xp: 12, icon: "🗄️" },
+  { id: "ml_study",   label: "ML concept study",   skill: "ml",     xp: 8,  icon: "🧠" },
+  { id: "mock",       label: "Mock interview",     skill: "dsa",    xp: 40, icon: "⚡" },
+  { id: "stats_study",label: "Stats deep dive",    skill: "stats",  xp: 8,  icon: "📊" },
+  { id: "sys_study",  label: "System design",      skill: "system", xp: 10, icon: "🏛️" },
+];
+
+const DEFAULT = {
+  skills: Object.fromEntries(SKILLS.map(s => [s.id, 0])),
+  log: [], streak: 0, lastLogDate: null, totalXp: 0
+};
+
+function load() {
+  try { const d = localStorage.getItem("hunter_v1"); return d ? JSON.parse(d) : JSON.parse(JSON.stringify(DEFAULT)); }
+  catch { return JSON.parse(JSON.stringify(DEFAULT)); }
+}
+
+function save(state) {
+  try { localStorage.setItem("hunter_v1", JSON.stringify(state)); } catch {}
+}
+
+function getRank(xp) {
+  let r = RANKS[0];
+  for (const rank of RANKS) { if (xp >= rank.min) r = rank; }
+  return r;
+}
+
+function getNextRank(xp) {
+  for (const rank of RANKS) { if (rank.min > xp) return rank; }
+  return null;
+}
+
+let state = load();
+let activeTab = "quests";
+let flashId = null;
+
+function render() {
+  const rank = getRank(state.totalXp);
+  const next = getNextRank(state.totalXp);
+  const xpProgress = next
+    ? Math.min(((state.totalXp - rank.min) / (next.min - rank.min)) * 100, 100)
+    : 100;
+  const xpToNext = next ? next.min - state.totalXp : 0;
+  const today = new Date().toDateString();
+  const todayCount = state.log.filter(e => e.date === today).length;
+
+  document.documentElement.style.setProperty("--rank-color", rank.color);
+
+  let html = `
+    <div class="hunter-card" style="--rank-color:${rank.color}; border-color:${rank.color}">
+      <div class="hunter-top">
+        <div>
+          <div class="rank-label">Rank ${rank.rank}</div>
+          <div class="hunter-name">Logan Lasell</div>
+          <div class="rank-title">${rank.label}</div>
+        </div>
+        <div class="xp-block">
+          <div class="xp-label">Total XP</div>
+          <div class="xp-value" style="color:${rank.color}">${state.totalXp.toLocaleString()}</div>
+          <div class="streak">${state.streak > 0 ? state.streak + " day streak 🔥" : "No streak yet"}</div>
+        </div>
+      </div>
+      ${next ? `
+      <div class="rank-progress">
+        <div class="rank-progress-labels">
+          <span>Progress to Rank ${next.rank}</span>
+          <span>${xpToNext} XP needed</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:${xpProgress}%;background:${rank.color}"></div>
+        </div>
+      </div>` : `<div class="max-rank-msg">Shadow Monarch achieved. You have ascended.</div>`}
+    </div>
+
+    <div class="rank-row">
+      ${RANKS.map(r => `
+        <div class="rank-pip ${state.totalXp >= r.min ? "unlocked" : ""}" style="color:${r.color};border-color:${state.totalXp >= r.min ? r.color : "var(--border)"}">
+          <span class="rank-pip-letter">${r.rank}</span>
+          ${r.rank}
+        </div>`).join("")}
+    </div>
+
+    <div class="card">
+      <div class="card-title">Skill stats</div>
+      ${SKILLS.map(sk => {
+        const val = state.skills[sk.id] || 0;
+        const pct = Math.min((val / sk.max) * 100, 100);
+        return `
+          <div class="stat-row">
+            <span class="stat-label">${sk.label}</span>
+            <div class="stat-track"><div class="stat-fill" style="width:${pct}%;background:${sk.color}"></div></div>
+            <span class="stat-xp">${val} xp</span>
+          </div>`;
+      }).join("")}
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn ${activeTab === "quests" ? "active" : ""}" onclick="setTab('quests')">Daily quests</button>
+      <button class="tab-btn ${activeTab === "log" ? "active" : ""}" onclick="setTab('log')">Log (${state.log.length})</button>
+      <button class="reset-btn" onclick="resetAll()">Reset</button>
+    </div>
+  `;
+
+  if (activeTab === "quests") {
+    html += QUESTS.map(q => {
+      const sk = SKILLS.find(s => s.id === q.skill);
+      const isFlash = flashId === q.id;
+      return `
+        <div class="quest-item ${isFlash ? "flash" : ""}" onclick="completeQuest('${q.id}')">
+          <span class="quest-icon">${q.icon}</span>
+          <div class="quest-body">
+            <div class="quest-name">${q.label}</div>
+            <div class="quest-sub">${sk.label}</div>
+          </div>
+          <span class="xp-badge" style="background:${sk.color}22;color:${sk.color}">+${q.xp} XP</span>
+        </div>`;
+    }).join("") + (todayCount > 0 ? `<div class="today-count">${todayCount} quest${todayCount !== 1 ? "s" : ""} completed today</div>` : "");
+  } else {
+    if (state.log.length === 0) {
+      html += `<div class="empty-state">No activity yet. Complete quests to build your log.</div>`;
+    } else {
+      html += state.log.map(e => {
+        const sk = SKILLS.find(s => s.id === e.skill);
+        return `
+          <div class="log-item">
+            <span class="log-name">${e.label}<span class="log-skill">${sk ? sk.label : e.skill}</span></span>
+            <span class="log-xp" style="color:${sk ? sk.color : "#888"}">+${e.xp} XP</span>
+            <span class="log-time">${e.time} &middot; ${e.date}</span>
+          </div>`;
+      }).join("");
+    }
+  }
+
+  document.getElementById("app").innerHTML = html;
+}
+
+function setTab(tab) {
+  activeTab = tab;
+  render();
+}
+
+function completeQuest(questId) {
+  const quest = QUESTS.find(q => q.id === questId);
+  if (!quest) return;
+
+  const prevRank = getRank(state.totalXp).rank;
+  const today = new Date().toDateString();
+
+  state.skills[quest.skill] = (state.skills[quest.skill] || 0) + quest.xp;
+  state.totalXp += quest.xp;
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  if (state.lastLogDate !== today) {
+    state.streak = state.lastLogDate === yesterday.toDateString() ? state.streak + 1 : 1;
+  }
+  state.lastLogDate = today;
+
+  state.log.unshift({
+    id: Date.now(),
+    label: quest.label,
+    skill: quest.skill,
+    xp: quest.xp,
+    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    date: today
+  });
+  if (state.log.length > 200) state.log = state.log.slice(0, 200);
+
+  save(state);
+
+  const newRank = getRank(state.totalXp);
+  if (newRank.rank !== prevRank) showRankUp(newRank);
+
+  flashId = questId;
+  render();
+  setTimeout(() => { flashId = null; render(); }, 500);
+}
+
+function showRankUp(rank) {
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.style.cssText = `background:${rank.bg};border-color:${rank.color};color:${rank.color}`;
+  t.innerHTML = `<div class="toast-up">Rank up</div><div class="toast-rank">Rank ${rank.rank} — ${rank.label}</div>`;
+  document.getElementById("toast-container").appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+function resetAll() {
+  if (!confirm("Reset all progress? This cannot be undone.")) return;
+  state = JSON.parse(JSON.stringify(DEFAULT));
+  save(state);
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
