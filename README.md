@@ -2,4 +2,4 @@
 
 ## Level up your CS skills and keep track through this Hunter Enhancement System!
 
-### Are you Ready Hunter?
+# Are you Ready Hunter?
