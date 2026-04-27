@@ -1,0 +1,83 @@
+# ========================
+# Virtual Environments
+# ========================
+.venv/
+venv/
+env/
+ENV/
+
+# ========================
+# Python
+# ========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ========================
+# Environment Variables
+# ========================
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+
+# ========================
+# Jupyter Notebooks
+# ========================
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ========================
+# macOS
+# ========================
+.DS_Store
+**/.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ========================
+# IDEs & Editors
+# ========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# ========================
+# Logs
+# ========================
+*.log
+logs/
+pip-log.txt
+
+# ========================
+# Docker
+# ========================
+.dockerenv
+
+# ========================
+# Testing & Coverage
+# ========================
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# ========================
+# Sensitive / Keys
+# ========================
+*.pem
+*.key
+secrets.json
+config.secret.*
