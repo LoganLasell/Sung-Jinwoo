@@ -4,14 +4,20 @@
 ## Level up your CS skills and keep track through this Hunter Enhancement System!
 
 ## Quest Types
-### Leetcode
-#### Easy & Medium & Hard
-### SQL
-#### Easy & Medium
+### Leetcode Problems
+- Easy
+- Medium
+- Hard
+### SQL Problems
+- Easy
+- Medium
 ### Machine Learning Concept Study
-#### ML & Python
+- ML Concepts
+- Python Concepts
 ### Mock Interview
-#### Data Structures & Algorithms / Leetcode Interview Problems
+- Data Structures
+- Algorithms
+- Leetcode Interview Problems
 ### Stats Deep Dive
 ### System Design Concepts
 
