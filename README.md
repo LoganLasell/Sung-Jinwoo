@@ -7,22 +7,22 @@
 <img src="HunterSystem.png" alt="Base">
 
 ## Current Quest Types
-### Leetcode Problems
+### 👊🏽 Leetcode Problems
 - Easy
 - Medium
 - Hard
-### SQL Problems
+### 👊🏽 SQL Problems
 - Easy
 - Medium
-### Machine Learning Concept Study
+### 👊🏽 Machine Learning Concept Study
 - ML Concepts
 - Python Concepts
-### Mock Interview
+### 👊🏽 Mock Interview
 - Data Structures
 - Algorithms
 - Leetcode Interview Problems
-### Stats Deep Dive
-### System Design Concepts
+### 👊🏽 Stats Deep Dive
+### 👊🏽 System Design Concepts
 
 # 
 
