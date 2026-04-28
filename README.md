@@ -3,6 +3,9 @@
 
 ## Level up your CS skills and keep track through this Hunter Enhancement System!
 
+# Base Hunter
+<img src="HunterSystem.png" alt="Base">
+
 ## Current Quest Types
 ### Leetcode Problems
 - Easy
@@ -20,9 +23,6 @@
 - Leetcode Interview Problems
 ### Stats Deep Dive
 ### System Design Concepts
-
-# Base Hunter
-<img src="HunterSystem.png" alt="Base">
 
 # Shadow Monarch Hunter
 <img src="HunterSystem_complete.png" alt="Shadow-Monarch">
