@@ -32,6 +32,8 @@
 # Are you Ready Hunter?
 <img src="papi_sung.jpg" alt="Shadow-Sung">
 
+# 
+
 #### *Dev note: You can customize your Hunter name in the HTML file provided.*
 #### *In this block of code, at the line labeled: ENTER YOUR HUNTER NAME*
 ```
