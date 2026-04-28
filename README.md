@@ -2,6 +2,19 @@
 <img src="baby_sung.webp" alt="Base-Sung">
 
 ## Level up your CS skills and keep track through this Hunter Enhancement System!
+
+## Quest Types
+### Leetcode
+#### Easy & Medium & Hard
+### SQL
+#### Easy & Medium
+### Machine Learning Concept Study
+#### ML & Python
+### Mock Interview
+#### Data Structures & Algorithms / Leetcode Interview Problems
+### Stats Deep Dive
+### System Design Concepts
+
 #### Base Hunter
 <img src="HunterSystem.png" alt="Base">
 
